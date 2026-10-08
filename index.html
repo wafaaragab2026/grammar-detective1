@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Grammar Detective - Grade 5</title>
+<style>
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#e8f4ff,#fff7df);margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#18324b}
+.game{width:min(720px,92%);background:white;border-radius:24px;padding:28px;box-shadow:0 12px 35px #0002;text-align:center}
+h1{margin:5px 0;color:#1769aa} .subtitle{color:#607d8b}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:bold;margin:18px 0}
+.progress{height:12px;background:#e8eef3;border-radius:20px;overflow:hidden}.bar{height:100%;width:10%;background:#2196f3;transition:.3s}
+.clue{font-size:25px;font-weight:bold;margin:30px 0 22px;line-height:1.45}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+button{border:0;border-radius:14px;padding:15px;font-size:20px;font-weight:bold;cursor:pointer;background:#edf5fb;color:#17496d}
+button:hover{transform:translateY(-2px)} button.correct{background:#c8f7d2} button.wrong{background:#ffd0d0}
+#next{margin-top:20px;background:#1769aa;color:white;display:none}
+.feedback{min-height:34px;margin-top:15px;font-size:19px;font-weight:bold}
+.final{font-size:24px;font-weight:bold;margin:20px}.restart{background:#ffb300;color:#fff}
+@media(max-width:500px){.answers{grid-template-columns:1fr}.clue{font-size:21px}}
+</style>
+</head>
+<body>
+<div class="game">
+<h1>🔎 Grammar Detective</h1>
+<div class="subtitle">Grade 5 • a / an / some / any</div>
+<div class="top"><span>⭐ Score: <b id="score">0</b></span><span>🧩 Puzzle <b id="num">1</b> / 10</span></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="clue" id="question"></div>
+<div class="answers" id="answers"></div>
+<div class="feedback" id="feedback"></div>
+<button id="next">Next Puzzle ➜</button>
+<div id="final"></div>
+</div>
+<script>
+const qs=[
+["There is ___ apple on the table.","an"],
+["I have ___ pencil in my bag.","a"],
+["There are ___ books on the desk.","some"],
+["We don't have ___ milk.","any"],
+["She wants ___ orange.","an"],
+["There are ___ eggs in the fridge.","some"],
+["Is there ___ water in the bottle?","any"],
+["He has ___ new bicycle.","a"],
+["I need ___ umbrella.","an"],
+["There aren't ___ bananas.","any"]
+];
+const choices=["a","an","some","any"];
+let i=0,score=0,answered=false;
+const $=id=>document.getElementById(id);
+function render(){
+ answered=false;$("question").textContent=qs[i][0];$("num").textContent=i+1;
+ $("feedback").textContent="";$("next").style.display="none";$("final").textContent="";
+ $("bar").style.width=((i+1)/qs.length*100)+"%";$("answers").innerHTML="";
+ choices.forEach(c=>{let b=document.createElement("button");b.textContent=c;b.onclick=()=>answer(c,b);$("answers").appendChild(b)})
+}
+function answer(c,b){
+ if(answered)return; answered=true;
+ document.querySelectorAll(".answers button").forEach(x=>x.disabled=true);
+ if(c===qs[i][1]){score+=10;$("score").textContent=score;b.classList.add("correct");$("feedback").textContent="✅ Excellent! You solved the clue!";}
+ else{b.classList.add("wrong");$("feedback").textContent="❌ Try again next time. Correct answer: "+qs[i][1];}
+ $("next").style.display="inline-block";
+}
+$("next").onclick=()=>{
+ if(i<qs.length-1){i++;render()}else{
+  $("question").textContent="🎉 Mystery Solved!";
+  $("answers").innerHTML="";$("feedback").textContent="";
+  $("next").style.display="none";
+  $("final").innerHTML="Your final score: "+score+" / 100 ⭐<br><br><button class='restart' onclick='location.reload()'>🔄 Play Again</button>";
+ }
+};
+render();
+</script>
+</body>
+</html>
